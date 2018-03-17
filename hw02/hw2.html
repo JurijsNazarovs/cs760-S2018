@@ -1,0 +1,197 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<title>Homework Assignment #2</title>
+</head>
+
+<body>
+<font size="3.5" face="roboto">
+
+<h2>Homework Assignment #2<br>
+Due at midnight on Friday, 2/23</h2>
+<h3 style="color:red;">No submissions will be accepted after 2/28.</h3>
+
+<!--
+<h3>Updates:</h3>
+%<ul>
+<li>2/13 - Candidate splits for numeric features should use thresholds that are midpoints between <b>unique</b> values in the given set of instances
+(previously the word 'unique' was absent from this line).
+</ul>
+-->
+<h3>Part 1</h3>
+
+
+For this part of the homework, you are to implement an ID3-like decision-tree
+learner for classification.<br>
+<b>NOTE:</b> all necessary files for this assignment can be found in the relevant <a href="https://canvas.wisc.edu/courses/77597/files/folder/homework/hw2">hw2</a> Canvas folder. 
+<p>
+
+Your program should read files that are in the <a href="http://weka.wikispaces.com/ARFF+%28stable+version%29">ARFF</a>
+ format.  In
+this format, each instance is described on a single line.  The feature
+values are separated by commas, and the last value on each line is the
+class label of the instance.  
+Each ARFF file starts with a header section describing the features and 
+the class labels.
+Lines starting with '%' are comments.
+See the link above for a brief, but more detailed description of the 
+ARFF format.
+Your program should handle numeric and nominal attributes, and simple 
+ARFF files (i.e. don't worry about sparse ARFF files and instance 
+weights).
+Example ARFF files are included in this assignment.
+</p><p>
+
+Your program can assume that (i) the class attribute is binary,
+(ii) it is named 'class', and (iii) it is the last attribute listed in
+the header section.
+</p><p>
+
+Your program should should implement a decision-learner according to the following guidelines:
+</p><ul>
+<li> Candidate splits for nominal features should have one branch per 
+value of the nominal feature.  The branches should be ordered according 
+to the order of the feature values listed in the ARFF file.
+</li><li> Candidate splits for numeric features should use thresholds that are midpoints between <!--unique-->
+ values in the given set of instances.  The left branch of such a split 
+should represent values that are less than or equal to the threshold.
+</li><li> Splits should be chosen using information gain. If there is a 
+tie between two features in their information gain, you should break the
+ tie in favor of the feature listed first in the header section of the 
+ARFF file.  If there is a tie between two different thresholds for a 
+numeric feature, you should break the tie in favor of the smaller 
+threshold.
+</li><li> The stopping criteria (for making a node into a leaf) are that
+<ol type="i">
+<li>all of the training instances reaching the node belong to the same class, <em>or</em>
+</li><li>there are fewer than <code>m</code> training instances reaching the node, where <code>m</code> is provided as input to the program, <em>or</em>
+</li><li>no feature has positive information gain, <em>or</em>
+</li><li>there are no more remaining candidate splits at the node.
+</li></ol>
+</li><li> If the classes of the training instances reaching a leaf are 
+equally represented, the leaf should predict the most common class of 
+instances reaching the parent node.
+</li><li> If the number of training instances that reach a leaf node is 
+0, the leaf should predict the the most common class of instances 
+reaching the parent node.
+</li></ul>
+
+Your program should be callable from the command line.
+It should be named <code>dt-learn</code> and should accept three
+command-line arguments as follows:<br> <code>dt-learn
+&lt;train-set-file&gt; &lt;test-set-file&gt; m</code><br> If you are using
+a language that is not compiled to machine code (e.g. Java), then you
+should make a small script called <code>dt-learn</code> that accepts the
+command-line arguments and invokes the appropriate source-code program
+and interpreter.
+<p>
+Here are <a href="https://www.biostat.wisc.edu/~craven/cs760/hw/SampleScripts/">examples of such scripts</a>.
+</p><p>
+
+As output, your program should print the tree learned from the training set and its predictions
+for the test-set instances. <b>NOTE:</b> Use the tab character "\t" between the "|" character in the tree. So, an example 
+output line "|	|	a4 = u [12 97]" should be encoded in your code as "|\t|\ta4 = u [12 97]".
+ Additionally, you should print the number of training instances of each class after each node.
+<br>
+For each instance in the test set, your program should print one line
+of output with spaces separating the fields.  Each output line should
+list the 
+predicted class label, and actual class label.  
+This should be followed by a line listing the number of correctly 
+classified test instances, and the total number of instances in the test
+ set.
+</p><p>
+The following files show the trees and test-set classifications that your code should produce when given <code>credit_train.arff</code> as the training set and <code>credit_test.arff</code> <b>as the test set</b>:
+</p><ul> 
+<li><code>credit_m=5</code>
+</li><li><code>credit_m=10</code>
+</li><li><code>credit_m=30</code>
+</li></ul>
+
+<p>
+
+</p><h3>Part 2</h3>
+
+For this part, you will plot a <a href="https://en.wikipedia.org/wiki/Learning_curve">learning curve</a>
+ that characterizes the predictive accuracy of your learned trees as a 
+function of the training set size.
+You will do this in the same problem domain of credit approval 
+screening. This data set involves predicting the approval or rejection 
+of credit card applications.
+Use the same <code>credit_train.arff</code> as your training set and
+<code>credit_test.arff</code> as your test set.<br>
+You should plot
+points for training set sizes that represent 5%, 10%, 20%, 50% and 100% of the instances in each given training file.  For
+each training-set size (except the largest one), randomly draw 10 different training sets
+and evaluate
+each resulting decision tree model on the test set.  For each training set
+size, plot the average test-set accuracy and the minimum and maximum
+test-set accuracy.  Be sure to label the axes of your plots.
+Set the stopping criterion <code>m=10</code> for these experiments.
+<p>
+Additionally, you will also plot an <a href="https://en.wikipedia.org/wiki/Receiver_operating_characteristic">ROC curve</a>
+ that will demonstrate the diagnostic ability of your classifier by 
+plotting the true positive rate against the false positive rate for 
+different cut-off points.
+Note that ROC curves require a measure of confidence on positive labels,
+ and your decision tree will not have this by default.
+To combat this, you will use frequency probabilities to assess your 
+confidence on each test example (i.e. for each leaf node that your test 
+example lands on, your confidence in that label being positive is the 
+number of positive training examples divided by the total number of 
+training examples for that leaf node).
+<br>
+In order to avoid probabilities of 0, you should use pseudocounts of <b>1</b>
+ when calculating this confidence.
+For example, if your test example lands on a leaf node which has 10 
+training examples labeled '+' and 30 examples labeled '-', your 
+confidence that your test example is '+' would be (10 + 1) / (40 + 1 + 
+1).
+The +1 in the numerator represents a pseudocount for the '+' class and 
+the +2 in the denominator represent pseudocounts for both the '+' and 
+'-' classes. This procedure is known as using <em>Laplace estimates</em>. See <a href="https://en.wikipedia.org/wiki/Additive_smoothing">this page</a> for more information.
+</p><p>
+Put these plots in a separate pdf file called <code>hw2.pdf</code>.
+
+</p><p>
+</p><h3>Part 3</h3>
+
+For this last part, you will create a simple confusion matrix from the provided file <code>predictions</code>.
+ The format of the file is as follows: each line contains two 
+comma-separated values, the first of which is the predicted class and 
+the second being the actual class.
+There are three possible classes, so your resulting matrix should have 
+dimensions 3x3. You do <b>not</b> need to include normalization in your matrix entries. Attach the confusion matrix to the end of your <code>hw2.pdf</code> submission file following your plots from Part 2.
+
+<h3>Submitting Your Work</h3>
+
+You should turn in your work electronically using the Canvas course management system.
+Turn in all source files and your runnable program as well as a
+file called <code>hw2.pdf</code> that shows your work for Parts 2 and 3. 
+All files should be compressed as one zip file named <code>&lt;Wisc username&gt;_hw2.zip</code>.
+Upload this zip file as Homework #2 at the <a href="https://canvas.wisc.edu/courses/77597">course Canvas site</a>.
+<br>
+
+<h3> <font color="red">Reminders: </font></h3><font color="red">
+
+<ul>
+<li>You need to ensure that your code will run, when called from the
+command line as described above, on the CS department Linux
+machines. 
+</li><li>You will be penalized if your program fails to meet any of the above specifications.
+</li><li> Make sure to test your programs on CSL machines before you submit. 
+</li><li> You can use third party libraries such as WEKA/arff ONLY for 
+parsing the ARFF files. Using any other machine learning libraries for 
+your core program is strictly prohibited. <b>NOTE:</b> Since many students are using python, 
+and the native lab machines don't have a package installed that reads arff files, we will 
+allow students to use the "scipy" package and the "scipy.io.arff.loadarff()" function 
+to load arff files. We will also allow students to use pandas 0.22.0. 
+We will still run the code on the lab machines, and we will be 
+using scipy 1.0.0. To create the same python environment on your lab machines, run 
+"pip install --user scipy" and "pip3 install --user scipy" from the command line of your 
+local computer. You may use scipy only for loading the arff files, and nothing else.
+</li></ul>
+
+</font>
+
+
+</font></body></html>

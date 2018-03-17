@@ -1,0 +1,165 @@
+
+<html>
+<head>
+<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+<title>Homework Assignment #3</title>
+</head>
+<body>
+    <font face = 'roboto' size = '3.5'>
+    <h2>Homework Assignment #3<br>
+    Due Friday, 3/9, 11:59 PM</h2>
+
+    <h3>
+    <font color = 'red'>No submissions will be accepted after 3/16.</font>
+    </h3>
+
+    <h3>UPDATED (2/27)</h3>
+    <ul>
+    	<li>The late deadline has been extended to 7 days (it is now 3/16)
+    	<li>Source code for generating your precision/recall plot points is now required (see below)
+    	<li>A concatenated dataset is given for conducting significance testing for Part 3
+    	<li>Several common mistakes/reminders have been added to Piazza. Please be sure to read these carefully before you submit.
+    </ul>
+
+    <h2> Part 1 </h2>
+
+    For this part of the homework, you are to write a program that implements both <b>Naive Bayes</b> and <b>TAN</b> (tree-augmented Naive Bayes).
+
+    <p>
+    <h3> Input </h3>
+    Your program should read files that are in the <a href="http://weka.wikispaces.com/ARFF+%28stable+version%29">ARFF</a> format.  
+    <p>In this format, 
+    <ul>
+        <li>Each instance is described on a single line.  
+	    <li>The feature values are separated by commas, and the last value on each line is the
+	    class label of the instance. 
+	    <li> Each ARFF file starts with a header section describing the features and the class labels. 
+		<li>Lines starting with '%' are comments.
+
+	</ul>
+    See the link above for a brief, but more detailed description of the ARFF format.
+    Your program needs to handle only <b> discrete attributes, and simple ARFF files </b> (i.e. don't worry about sparse ARFF files and instance weights).
+    Example ARFF files are provided below.
+    Your program can assume that the class attribute is named 'class' and it is the last attribute listed in
+    the header section.
+	<p>
+
+    <h3> Program specifications </h3>
+    <p>
+    Specifically, for this assignment, you should assume:
+    <ul>
+    	<li> Your code is intended for binary classification problems.
+    	<li> All of the attributes are discrete valued.  
+    	<li> Your program should be able to handle a variable number of attributes with possibly different numbers of values for each attribute.
+    	<li> You use Laplace estimates (pseudocounts of 1) when estimating all probabilities.
+    </ul>
+
+    <p>
+
+    For the TAN algorithm. Your program should:
+    <ul>
+    	<li> Use <a href="https://en.wikipedia.org/wiki/Prim%27s_algorithm">Prims's algorithm</a> to find a maximal spanning tree (but choose <b>maximal</b> weight edges instead of minimal weight ones). </li>
+        <li> Initialize this process by choosing the first attribute in the input file for <em>V<sub>new</sub></em>.</li> 
+		<li>If there are ties in selecting maximum weight edges, use the following preference criteria: </li>
+		<ol>
+			<li>Prefer edges emanating from attributes listed earlier in the input file. </li>
+			<li>If there are multiple maximal weight edges emanating from the first such attribute, prefer edges going to attributes listed earlier in the input file.</li>
+		</ol>
+		<li> To root the maximal weight spanning tree, pick the first attribute in the input file as the root.</li>
+	</ul>
+	The program should be called <code>bayes</code> and should accept four
+	command-line arguments as follows:<br> <code>bayes
+	&lt;train-set-file&gt; &lt;test-set-file&gt; &lt;n|t&gt;</code><br> where the last argument is a single character (either 'n' or 't') that indicates whether to use naive Bayes or TAN.
+	<p>
+
+	If you are using
+	a language that is not compiled to machine code (e.g. Java), then you
+	should make a small bash script called <code>bayes</code> that accepts the
+	command-line arguments and invokes the appropriate source-code program
+	and interpreter.
+	<p>
+	Here are <a href="https://www.biostat.wisc.edu/~craven/cs760/hw/SampleScripts/">examples of such scripts</a> from the last assignment, which you can reuse.
+	Be sure to change the names of the programs!
+	<p>
+
+	<p> 
+	<h3>Output</h3>
+	Your program should determine the network structure (in the case of TAN)
+	and estimate the model parameters using the given training set,
+	and then classify the instances in the test set.
+	Your program should output the following:
+	<ul>
+		<li> The structure of the Bayes net by listing one line per attribute in which you list (i) the name of the attribute, (ii) the names of its parents in the Bayes net (for naive Bayes, this will simply be the 'class' variable for each attribute) separated by whitespace.</li>
+		<li> One line for each instance in the test-set (in the same order as this file)</li>
+	indicating (i) the predicted class, (ii) the actual class, (iii) and the posterior probability of the predicted class.
+		<li> The number of the test-set examples that were correctly classified.</li>
+	</ul>
+
+	<p>
+
+	You can test the correctness of your code using the files <code>lymph_train.arff</code> and <code>lymph_test.arff</code>.
+	<br>
+	The files <code>lymph_naive</code> and <code>lymph_tan</code> contain the output that your program should display for the lymph data set. Note that the output requires the
+	posterior probability having 12 digits of precision for each data set. For your TAN implementation, see the file <code>lymph_tan_debug</code> for intermediate calculations
+	and information.
+	<p>
+
+
+	<h2>Part 2</h2>
+	<p>
+
+	Plot a <a href = "https://en.wikipedia.org/wiki/Precision_and_recall"> precision/recall curve</a> for both methods, and answer the following questions:
+	<ol>
+		<li> Compare the two curves, and make a comment about which method (TAN or Naive) seems to have more predictive power. Explain why you think that (i.e. what features of the
+			precision/recall curve lead you to this conclusion?).</li>
+		<li> Discuss the advantages and disadvantages of ROC versus PR curves, and specifically how they relate to this data set. Which curve would you think to be more informative 
+			for this domain?</li>
+	</ol>
+	
+	Consider the label listed first in the ARFF file as the "positive" label (and conversely the second listed label as "negative").
+	You should use the given test set <code>lymph_test.arff</code> to generate your points for this curve. Submit the learning curves in a PDF file called <code>hw3.pdf</code>.
+	<br>
+	NOTE: You may not use any built-in library functions to generate your points for the precision/recall curve - you must do this manually and turn in your source code in a file named <code>pr_plot.&lt;extension&gt;</code>. For example, <code>pr_plot.py</code> or <code>pr_plot.cpp</code>.
+	<p></p>
+
+	<h2>Part 3</h2>
+	<p>
+	For this part, you will compare your classifiers and use a paired <i>t</i> test to see if one of the systems is more accurate than the other. Using the given data set
+	named <code>lymph_cv.arff</code>, use 10-fold cross validation to obtain 10 accuracy measures for each classifier. You'll notice that <code>lymph_cv.arff</code> is simply 
+	a concatenation of the given train and test files. Use these accuracies to conduct your paired <i>t</i> test and discover whether you accept or reject the alternative hypothesis (that the classifiers truly differ in accuracy). Specifically, calculate the accuracy deltas for each cross validation fold and report the following values/answers:
+	<ol>
+		<li> Calculate the sample mean </li>
+		<li> Calculate the <i>t</i> statistic </li>
+		<li> Determine the corresponding <i>p</i>-value for a two-tailed test by looking up <i>t</i> in a <i>t</i>-table with <i>n-1</i> degrees of freedom. Use a threshold of <i>p</i> = 0.05 when determining if it is significant or not. </li>
+	</ol>
+	Record your answers (and show your work for partial credit) in your <code>hw3.pdf</code> file. 
+
+	<h2> Submitting Your Work </h2>
+	You should turn in your work electronically using the Canvas course management system.
+	Turn in all source files and your runnable program as well as a
+	file called <code>hw3.pdf</code> that shows your work for Parts 2 and 3. 
+	All files should be compressed as one zip file named <code>&lt;Wisc username&gt;_hw3.zip</code>.
+	Upload this zip file as Homework #3 at the <a href="https://canvas.wisc.edu/courses/77597">course Canvas site</a>.
+	<br>
+
+	<h3> <font color="red">Reminders: </font></h3>
+	<font color="red">
+	<ul>
+		<li>You need to ensure that your code will run, when called from the
+		command line as described above, on the CS department Linux
+		machines.</li>
+		<li>You will be penalized if your program fails to meet any of the above specifications.</li>
+		<li> Make sure to test your programs on CSL machines before you submit. </li>
+		<li> Since many students are using python, 
+		and the native lab machines don't have a package installed that reads arff files, we will 
+		allow students to use the "scipy" package and the "scipy.io.arff.loadarff()" function 
+		to load arff files. We will also allow students to use pandas 0.22.0. 
+		We will still run the code on the lab machines, and we will be 
+		using scipy 1.0.0. To create the same python environment on your lab machines, run 
+		"pip install --user scipy" and "pip3 install --user scipy" from the command line of your 
+		local computer. You may use scipy only for loading the arff files, and nothing else.</li>
+	</ul>
+	</font>
+	</font>
+</body>
+</html>

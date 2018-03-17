@@ -1,0 +1,355 @@
+import numpy as np
+import pandas as pd
+
+from scipy.io import arff
+import sys
+
+
+# Class description
+class Node(object):
+    def __init__(self,
+                 name=None,
+                 parent=None,
+                 child=None,
+                 post_prob=None):
+        self.name = name
+        self.parent = parent or []
+        self.child = child or []
+        self.post_prob = post_prob or {}
+
+    def printNode(self):
+        print("name: ", self.name,
+              "\n parent: ", self.parent,
+              "\n child: ", self.child,
+              "\n post_prob: ", self.post_prob)
+
+    def printTree(self):
+        for child in self.child:
+            parent_str = []
+            for parent in child.parent:
+                parent_str.append(parent.name)
+
+            parent_str = " ".join(parent_str)
+            print("%s %s" % (child.name, parent_str))
+
+    def sortChild(self, order):
+        self.child.sort(key=lambda x: order.index(x.name))
+
+    def constructDag(self, edges):
+        # self is root to start DAG from
+        if len(edges) != 0:
+            edges_w_root = [i for i in edges if self.name in i]
+            edges_no_root = [i for i in edges if i not in edges_w_root]
+            for edge in edges_w_root:
+                child = Node(name=edge[1 - edge.index(self.name)],
+                             parent=[self])
+                self.child.append(child)
+                child.constructDag(edges_no_root)
+
+    def appendToEveryParent(self, new_parent):
+        self.parent.append(new_parent)
+        new_parent.child.append(self)
+
+        if len(self.child) != 0:
+            for child in self.child:
+                child.appendToEveryParent(new_parent)
+
+    def updatePostProb(self, data, meta):
+        if len(self.parent) == 0:
+            for poss_val in meta[self.name][1]:
+                p = estProb(data[self.name],
+                            poss_val,
+                            meta)
+                self.post_prob[poss_val] = p
+        else:
+            parents_name = [parent.name for parent in self.parent]
+            comb_val_parents = getCombValues(parents_name, meta)
+
+            # Calculate posterior probability
+            for poss_val in meta[self.name][1]:
+                for cond_val in comb_val_parents:
+                    p = estCondProb(data[self.name],
+                                    poss_val,
+                                    data[parents_name],
+                                    cond_val,
+                                    meta)
+
+                    if not isinstance(cond_val, tuple):
+                        cond_val = (cond_val,)
+
+                    self.post_prob[":".join(
+                        [poss_val, ",".join(cond_val)])] = p
+
+        if len(self.child) != 0:
+            for child in self.child:
+                child.updatePostProb(data, meta)
+
+    def predict(self, x):
+        # Predicts one instance
+        # returns [class, posterior, confidence]
+        if not isinstance(x, pd.Series):
+            x = pd.Series(x)
+
+        # Calculate class distribution
+        attr_names = list(x.index)
+        class_distr = []
+        pos_class = list(self.post_prob.keys())
+
+        for c in pos_class:
+            p = self.post_prob[c]
+            for child in self.child:
+                data_val = x[child.name]
+                # Find parents, their indicies, their x
+                cond_val = []
+                parents = [parent.name for parent in child.parent]
+                for parent in parents:
+                    if parent is self.name:
+                        cond_val.append(c)
+                    else:
+                        cond_val.append(x[parent])
+
+                # Find p
+                p *= child.post_prob[":".join([data_val, ",".join(cond_val)])]
+            class_distr.append(p)
+
+        # Normalization
+        class_distr /= sum(class_distr)
+        return [pos_class[np.argmax(class_distr)],
+                max(class_distr),
+                class_distr[0]]
+
+    def predictSet(self, x):
+        labels = []
+        probs = []
+        confs = []  # confidence of positive label
+        for i in range(0, len(x)):
+            label, prob, conf = self.predict(x.iloc[i])
+            labels.append(label)
+            probs.append(prob)
+            confs.append(conf)
+        return [labels, probs, confs]
+
+    def PR(self, x, y, pos_label='metastases'):
+        _, _, c = self.predictSet(x)
+        c = np.array(c)
+        ind = np.argsort(-np.array(c))
+
+        c = c[ind]
+        y = y[ind].reset_index(drop=True)
+
+        n_pos = sum(y == pos_label)
+        n_pred_pos = 0
+        TP = 0
+
+        pr = []
+        for i in range(0, len(y)):
+            if c[i] >= 0.5:
+                n_pred_pos += 1
+                if y[i] == pos_label:
+                    TP += 1
+            pr.append([TP / n_pos, TP / n_pred_pos])
+
+        pr = pd.DataFrame(pr, columns=["recall", "precision"])
+        return(pr)
+
+
+# Other functions
+def decodeData(data, meta_type):
+    ind = [i for i, x in enumerate(meta_type) if x == "nominal"]
+    for i in ind:
+        tmp = [x.decode() for x in data.iloc[:, i]]
+        data.iloc[:, i] = tmp
+
+
+def estCondProb(data, data_val, cond, cond_val, meta):
+    # Meta for the whole data set, but data is specific columns
+    if not isinstance(data, pd.DataFrame):
+        data = pd.DataFrame(data)
+    if not isinstance(data_val, pd.DataFrame):
+        data_val = pd.DataFrame(
+            [data_val], columns=data.columns.values).to_dict('list')
+    if not isinstance(cond, pd.DataFrame):
+        cond = pd.DataFrame(cond)
+    if not isinstance(cond_val, pd.DataFrame):
+        cond_val = pd.DataFrame(
+            [cond_val], columns=cond.columns.values).to_dict('list')
+
+    ind = (cond.isin(cond_val)).all(axis=1)
+    sel_data = data[ind]
+    # uniq_sel_data = sel_data.drop_duplicates()
+    # n_uniq_sel_data = len(uniq_sel_data)
+    uniq_sel_data = [len(meta[i][1]) for i in data.columns.values]
+    n_uniq_sel_data = np.product(uniq_sel_data)
+
+    prob = (sum(sel_data.isin(data_val).all(axis=1)) + 1) /\
+        (len(sel_data) + n_uniq_sel_data)
+    return prob
+
+
+def estProb(data, data_val, meta):
+    # Meta for the whole data set, but data is specific columns
+    if not isinstance(data, pd.DataFrame):
+        data = pd.DataFrame(data)
+    if not isinstance(data_val, pd.DataFrame):
+        data_val = pd.DataFrame(
+            [data_val], columns=data.columns.values).to_dict('list')
+
+    # uniq_data = data.drop_duplicates()
+    uniq_data = [len(meta[i][1]) for i in data.columns.values]
+    n_uniq_data = np.product(uniq_data)
+    prob = (sum(data.isin(data_val).all(axis=1)) + 1) /\
+        (len(data) + n_uniq_data)
+    return prob
+
+
+def growTree(data, meta, root_name="class", method="t"):
+    # Initial data
+    root = Node(name=root_name)
+    x = pd.DataFrame(data.iloc[:, data.columns != root_name])
+
+    # Grow a tree from root
+    if method.lower() == "t":
+        y = pd.DataFrame(data.iloc[:, data.columns == root_name])
+        tree_mst = growMST(x, y, meta)
+        # Make root as a parent of every child in a graph
+        tree_mst.appendToEveryParent(root)
+    else:
+        # Create children for a root
+        for i in range(0, x.shape[1]):
+            root.child.append(Node(name=x.iloc[:, i].name,
+                                   parent=[root]))
+
+    return root
+
+
+def growMST(x, y, meta):
+    vertices = list(x.columns.values)
+    weights = []
+    p = len(vertices)
+
+    # Calculate weights
+    uniq_y = list(meta[y.columns.values[0]][1])
+    for i in range(0, p - 1):
+        uniq_a = list(meta[x.columns.values[i]][1])
+        for j in range(i + 1, p):
+            uniq_b = list(meta[x.columns.values[j]][1])
+            I = 0
+            for a in uniq_a:
+                for b in uniq_b:
+                    for y_tmp in uniq_y:
+                        p_aby = estProb(pd.concat([x.iloc[:, [i, j]], y], axis=1),
+                                        [a, b, y_tmp],
+                                        meta)
+                        p_ab_y = estCondProb(x.iloc[:, [i, j]],
+                                             [a, b],
+                                             y,
+                                             y_tmp,
+                                             meta)
+                        p_a_y = estCondProb(x.iloc[:, i],
+                                            a,
+                                            y,
+                                            y_tmp,
+                                            meta)
+                        p_b_y = estCondProb(x.iloc[:, j],
+                                            b,
+                                            y,
+                                            y_tmp,
+                                            meta)
+                        I += p_aby * np.log2(p_ab_y / (p_a_y * p_b_y))
+
+            weights.append((vertices[i], vertices[j], I))
+            weights.append((vertices[j], vertices[i], I))
+
+    # Detect edges
+    V = [vertices[0]]
+    edges = []
+    while set(V) != set(vertices):
+        # Delete all weights with second element from v
+        weights_filtered = [i for i in weights if i[0] in V and i[1] not in V]
+
+        # Detect new node
+        max_weight = max(weights_filtered, key=lambda x: x[2])[2]
+        nodes_max_weight = [i for i in weights_filtered if i[2] == max_weight]
+        new_node = nodes_max_weight[0]
+        for i in range(1, len(nodes_max_weight)):
+            cand_node = nodes_max_weight[i]
+            if vertices.index(cand_node[0]) < vertices.index(new_node[0]) or\
+               (vertices.index(cand_node[0]) == vertices.index(new_node[0]) and
+                    vertices.index(cand_node[1]) < vertices.index(new_node[1])):
+                new_node = cand_node
+
+        V.append(new_node[1])
+        edges.append(new_node[0:2])  # 2 is not included
+
+    # Construct DAG
+    tree_mst = Node(name=vertices[0])
+    tree_mst.constructDag(edges)
+
+    return(tree_mst)
+
+
+def printPredictionSummary(y_pred, y, p):
+    for i in range(0, len(y_pred)):
+        print("%s %s %.12f" % (y_pred[i], y[i], p[i]))
+    print()
+    print(sum(y == y_pred))
+
+
+def getCombValues(names, meta):
+    comb_vals = None
+    for name in names:
+        vals = meta[name][1]  # range of values
+        if comb_vals is None:
+            comb_vals = vals
+        else:
+            new_comb_vals = []
+            for v1 in comb_vals:
+                for v2 in vals:
+                    if not isinstance(v1, tuple):
+                        v1 = (v1,)
+                    if not isinstance(v2, tuple):
+                        v2 = (v2,)
+                    new_comb_vals.append(v1 + v2)
+            comb_vals = new_comb_vals
+    return comb_vals
+
+
+if __name__ == "__main__":
+    # Input
+    train_file_path = sys.argv[1]
+    test_file_path = sys.argv[2]
+    method = sys.argv[3]
+    # Import data
+    class_id = 'class'
+    # Training set
+    data_train, meta = arff.loadarff(train_file_path)
+
+    meta_data = {}
+    for i in meta.names():
+        meta_data[i] = meta[i]
+    meta_data = pd.DataFrame(meta_data)
+    meta_data = meta_data[meta.names()]
+
+    data_train = pd.DataFrame(data_train)
+    decodeData(data_train, meta_data.iloc[0, :])
+
+    # Testing set
+    data_test, _ = arff.loadarff(test_file_path)
+    data_test = pd.DataFrame(data_test)
+    decodeData(data_test, meta_data.iloc[0, :])
+
+    x_test = pd.DataFrame(
+        data_test.iloc[:, data_test.columns.values != class_id])
+    y_test = data_test[class_id]
+
+    # Training
+    tree = growTree(data_train, meta, root_name="class",  method=method)
+    tree.sortChild(meta.names())
+    tree.printTree()
+    print("")
+
+    # Testing
+    tree.updatePostProb(data_train, meta)
+    y_pred, probs, _ = tree.predictSet(x_test)
+
+    printPredictionSummary(y_pred, y_test, probs)

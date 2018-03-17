@@ -1,0 +1,19 @@
+---
+title: "Assignment 02"
+author: "Jurijs Nazarovs"
+date: "2/22/2018"
+output: pdf_document
+---
+
+# Problem 2
+![](/Users/owner/Box Sync/UW/_cs760/hw02/learning_curve.pdf){width=350px}\ 
+![](/Users/owner/Box Sync/UW/_cs760/hw02/roc.pdf){width=350px}\ 
+
+# Problem 3
+Confusion matrix. Rows - predicted, columns - real.
+
+|     | 1    |  2   |  3    |      
+| :---: | :----: | :----: | :-----: |
+|1    | 3016 | 469  | 268 |
+|2    | 217  | 4034  | 613 |
+|3    | 114  |  281  | 987 |

@@ -1,0 +1,5 @@
+import csv
+data_path = "/Users/owner/Box Sync/UW/_cs760/hw02/predictions.txt"
+
+with open(dataPath, 'rb') as csvfile:
+    spamreader = csv.reader(csvfile, delimiter=' ', quotechar='|')
