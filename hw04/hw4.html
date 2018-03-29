@@ -1,0 +1,235 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html">
+<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+<title>Homework Assignment #4</title>
+<script>(function n(){!function(){function e(e,t,n){t=t||{};var a=e.ownerDocument||e,i=a.createEvent?a.createEvent("CustomEvent"):a.createEventObject();i.initCustomEvent&&i.initCustomEvent(t.type,!!t.bubbles,!!t.cancelable,t.detail);for(var r in t)i[r]=t[r];return setTimeout(function(){try{e.dispatchEvent?e.dispatchEvent(i):e.fireEvent("on"+t.type,a.createEventObject())}catch(n){var r=e["listen"+t.type];if(r)for(var s=0;s<r.length;++s)try{r[s].call(e,i)}catch(e){}}n()},0),this}function t(e,t,n){function a(e,t){try{var n=e.ownerDocument;if(n.createEventObject){var a=n.createEventObject();e.fireEvent("on"+t,a)}else a=n.createEvent("HTMLEvents"),a.initEvent(t,!0,!0),e.dispatchEvent(a)}catch(e){}}var i=!0,r=e.className&&e.className.indexOf("fancified")!=-1;if(window.jQuery){var s=window.jQuery(e);try{if(s.selectBoxIt)s.selectBoxIt("selectOption",s.val());else if(s.data("chosen")||s.chosen)s.trigger("chosen:updated").trigger("liszt:updated");else if(s.data("chooserElement"))s.trigger("change");else if(s.fancySelect)s.get("fancySelect").select("value",s.val());else if(s.selectBox)s.selectBox("value",s.val());else if(s.selectric)s.selectric("refresh");else if(s.coreUISelect){var o=s.data("coreUISelect");o.isSelectShow=!0,o.changeDropdownData(),o.isSelectShow=!1}else if(s.data("myJSPulldownObject")){var l=s.data("myJSPulldownObject");l.setToValue(s.val())}else if(s.fancyfields)s.setVal(s.val());else if(s.data("select2"));else if(s.data("selectize"))i=!1,s.data("selectize").setValue(s.val());else if(s.hasClass("fancified"))s.trigger("update");else if(s.selectmenu){var d=s.val();try{s.selectmenu("value",s[0].options[0].value)}catch(e){}s.selectmenu("value",d)}else if(s.hasClass("select-hidden")&&s.next("div.select-styled").length&&s.next("div.select-styled").next(".select-options").length){var c=s.next("div.select-styled").next(".select-options"),m=c.find("li[rel='"+s.val()+"']");m.click()}s.trigger("change")}catch(e){}}i&&(r&&a(e,"update"),a(e,"change"),a(e,"blur")),n()}function n(t,n,a,i){var r=t.value;e(t,{type:"keydown",keyCode:n,which:n,charCode:n,bubbles:!0},function(){e(t,{type:"keypress",keyCode:n,which:n,charCode:n,bubbles:!0},function(){setTimeout(function(){var s=t.value;r==s&&(t.value=a),e(t,{type:"input",keyCode:n,which:n,charCode:n,bubbles:!0},function(){e(t,{type:"keyup",keyCode:n,which:n,charCode:n,bubbles:!0},function(){i()})})},1)})})}function a(e,t,i,r){if(!t||""==t)return void r();var s=t.charCodeAt(0);i+=t.charAt(0),n(e,s,i,function(){a(e,t.substring(1),i,r)})}function i(t,n,a){if(window.abineTriggerChangeInProgress)return void setTimeout(function(){i(t,n,a)},100);var r=!0;window.abineTriggerChangeInProgress=!0;try{if(window.jQuery){var s=window.jQuery(t);s.data("rawMaskFn")||s.mask||s.CardPhoneFormatting?s.focus().val(n).trigger("input").trigger("paste"):s.next(".inner").find(".options").length&&(r=!1,optionsContainer=s.next(".inner").find(".options"),optionElements=optionsContainer.find("span"),optionElements.each(function(){optionElement=$(this),optionElementHtml=$(optionElement).html(),optionElementHtml.toLowerCase().indexOf(n)>-1&&$(optionElement).click()}))}}catch(e){}r?e(t,{type:"change"},function(){e(t,{type:"blur"},function(){try{var e=new Event("input",{bubbles:!0,cancelable:!0});t.dispatchEvent(e)}catch(e){}window.abineTriggerChangeInProgress=!1,a()})}):(window.abineTriggerChangeInProgress=!1,a())}function r(t,n,r){try{t.ownerDocument.defaultView.focus()}catch(e){}e(t,{type:"focus"},function(){e(t,{type:"click"},function(){a(t,n+"\n","",function(){i(t,n,function(){e(document,{type:"abineFilled"},function(){r()})})})})})}function s(n,a,i,r){var s=/[\s]+/g,o=(a||"").toLowerCase().replace(s,""),l=function(){e(document,{type:"abineFilled"},function(){r()})},d=!1,c=!1,m=n.getElementsByTagName("option");if(m&&m.length>0){for(var u=-1,h=0;h<m.length;h++){var p=(m[h].text||"").toLowerCase().replace(s,""),_=(m[h].getAttribute("value")||"").toLowerCase().replace(s,"");if(_==o||p==o){m[h].selected||(d=!0,m[h].selected=!0),c=!0;break}u==-1&&p.indexOf(o)!=-1&&(u=h)}c||u==-1||i||m[u].selected||(d=!0,m[u].selected=!0,c=!0)}n.setAttribute("abineFillResponse",c),d?t(n,a,l):l()}function o(){var e=document.getElementsByClassName("abineFillTarget");if(e.length>0)return e[0];for(var t=0;t<frames.length;t++)try{var e=frames[t].document.getElementsByClassName("abineFillTarget");if(e.length>0)return e[0]}catch(e){}return null}function l(){var n=document.createElement("div");n.id="abineFillElement","undefined"!=typeof paypal&&n.setAttribute("data-paypal","1"),"undefined"!=typeof OffAmazonPayments&&n.setAttribute("data-amazon","1"),"undefined"!=typeof MasterPass&&n.setAttribute("data-masterpass","1"),document.documentElement.appendChild(n),n.addEventListener("fill",function(){var t=o();if(t){var a=n.getAttribute("value");r(t,a,function(){})}else e(document,{type:"abineFilled"},function(){})},!1),n.addEventListener("fillSelect",function(){var t=o();if(t){var a=n.getAttribute("value"),i=!!n.getAttribute("skipPartial");s(t,a,i,function(){})}else e(document,{type:"abineFilled"},function(){})}),n.addEventListener("triggerChange",function(){var e=o(),a=n.getAttribute("value");e&&(e.nodeName.match(/select/i)?t(e,a,function(){}):i(e,a,function(){}))})}l()}()})()</script></head>
+
+<body>
+<font face = 'roboto' size = '3.5'>
+<h2>Homework Assignment #4<br>Due Friday, March 23</h2>
+
+<h3>Part 1</h3>
+<p>
+    For this part, you will work through a backpropagation example by hand,
+    using the neural network, weights, and input instance found in
+    <a href="">Part1_NN.png</a>.
+    This will be useful both for understanding backpropagation, as well as
+    for debuging your neural network code for part 3. You are provided a neural
+    network with corresponding weights, and an instance to perform forward
+    and backward propagation with. Below, we ask you to perform a single iteration,
+    and compute multiple values for both the forward and backward propagation
+    steps.
+    <ul>
+        <li>The learning rate is 1.</li>
+        <li>Cross entropy is the loss/error function.</li>
+        <li>Both the hidden layer and output layer neurons use sigmoid functions.</li>
+    </ul>
+</p>
+<p>We would like you to compute the following:</p>
+<ol>
+    <li>
+        Compute the outputs at h1, h2, h3, and o for the given instance after
+        forward propagation.
+    </li>
+    <li>
+        Compute the delta_j values for each node in the same manner as described
+        in the notes <a href="https://www.biostat.wisc.edu/~craven/cs760/lectures/ANNs-2.pdf">here</a>.
+    </li>
+    <li>
+        Compute the delta wij values for each node in the same manner as described
+        in the notes <a href="https://www.biostat.wisc.edu/~craven/cs760/lectures/ANNs-2.pdf">here</a>.
+    </li>
+</ol>
+
+
+<h3>Part 2</h3>
+<p>
+For this part of the homework, you are going to implement logistic regression using 
+a neural network and stochastic gradient descent. Logistic regression is a 
+powerful generalized linear model that is used quite often in practice. Your program 
+should be callable from the command line, through a bash script, similar to the examples 
+found here: 
+<a href="https://www.biostat.wisc.edu/~craven/cs760/hw/SampleScripts/">examples</a>. 
+The bash script should be named <code>logistic</code> and should accept two 
+command-line arguments as follows:<br> <code>logistic l e &lt;train-set-file&gt;
+&lt;test-set-file&gt;</code><br> where  <code>l</code> specifies the learning rate, 
+and <code>e</code> specifies the number of training epochs.  After training for 
+<code>e</code> epochs on the training set, you should use the 
+learned neural net to predict a classification for every 
+instance in the test set.
+</p>
+
+<p>
+You can assume:
+</p>
+<ul>
+	<li>
+        Your network is intended for binary classification problems, and
+        therefore it has one output unit with a sigmoid function.  The sigmoid
+        should be trained to predict 0 for the first class listed in the given
+        ARFF files, and 1 for the second class.
+	</li>
+    <li>
+        Stochasic gradient descent is used to minimize cross-entropy error.
+    </li>
+    <li> 
+        For each numeric feature, you should use one input unit. For each
+        discrete feature, you should use a one-of-<em>k</em>
+        encoding. (Optionally, you can use a thermometer encoding for discrete
+        numeric features).
+    </li>
+    <li>
+        <b>To ensure that hidden unit activations don't get saturated, you should standardize numeric features as described <a href="https://www.biostat.wisc.edu/~craven/cs760/hw/standardizing.pdf">in this document.</a></b> Note: The logistic model has no hidden units, so this only pertains to the nnet portion in part 3.
+    </li>
+    <li>
+        Each epoch is one complete pass through the training
+        instances. You should randomize the order of the training instances
+        before starting training, but each epoch can go through the instances in
+        the same order.
+    </li>
+    <li>
+        All weights and bias parameters are initialized to random values in [-0.01, 0.01].
+    </li>
+</ul>
+
+<p>
+Your program should read files that are in the <a href="http://weka.wikispaces.com/ARFF+%28stable+version%29">ARFF</a>
+ format.  In
+this format, each instance is described on a single line.  The feature
+values are separated by commas, and the last value on each line is the
+class label of the instance.  
+Each ARFF file starts with a header section describing the features and 
+the class labels.
+Lines starting with '%' are comments.
+See the link above for a brief, but more detailed description of the 
+ARFF format.
+Your program should handle numeric and nominal attributes, and simple 
+ARFF files (i.e. don't worry about sparse ARFF files and instance 
+weights).
+Example ARFF files are provided below.
+</p>
+
+<p>
+Your program should produce output in the exact same format as
+our example output found in <a href="">magic_log_out.txt</a> on canvas, given
+the command <code>logistic 0.01 3 magic_train.arff magic_test.arff</code>.
+
+Your program should produce output in the exact same format as
+our example output found in <a href="">diabetes_log_out.txt</a> on canvas, given
+the command <code>logistic 0.1 10 diabetes_train.arff diabetes_test.arff</code>.
+Your
+program should produce as output the following:
+</p>
+<ul>
+    <li>
+        After each training epoch, print the epoch number (starting from
+        1), the cross-entropy error, the number of training instances that are
+        correctly classified, and the number of instances that are
+        are misclassified.  Print these four values on one line separated by
+        tabs ('\t'). To determine a classification, use a threshold of
+        0.5 on the activation of the output unit (i.e. the value computed by
+        the sigmoid).
+    </li>
+    <li>
+        After training, print for each test instance the activation of
+        the output unit, the predicted class, and the correct class.  Print
+        these values tab-separated with one line per test instance.
+    </li>
+    <li>
+        Print the number of correctly classified and the
+        number of incorrectly classified test instances when a threshold of 0.5
+        is used on the activation of the output unit.
+    </li>
+    <li>
+        Finally, output the f1-score for the model. F1 is defined <a href="https://en.wikipedia.org/wiki/F1_score">here</a>. The equation is (2*(precision*recall))/(precision + recall)
+    </li>
+</ul>
+<p>
+    <font color="red">
+    <b>For this assignment we do not expect you outputs to exactly match ours.
+    However, your outputs in terms of decreasing cross-entropy error, and
+    overall performance should be somewhat similar to ours (but we aren't really checking your
+    error calculations or predictions, other than making sure that the predictions are not all
+    1's or all 0's).
+    (Your average F1 score should be over 0.65 when run 5 times on the magic
+    data set, and above 0.60 when run 5 times on the diabetes data set.)</b>
+    </font>
+</p>
+
+<h3>Part 3</h3>
+<p>
+    For this part of the homework, you will expand upon the framework
+    you developed for logistic regression, and implement a
+    neural network with a single, fully connected hidden layer, that uses
+    cross-entropy as the loss function. The bash script should be
+    named <code>nnet</code> and should accept three command-line arguments as
+    follows:<br> <code>nnet l h e &lt;train-set-file&gt;
+    &lt;test-set-file&gt;</code><br> where <code>l</code> specifies the learning rate,
+    <code>h</code> specifies the number of hidden units, and <code>e</code>
+    specifies the number of training epochs.
+</p>
+
+<p>
+Feel free to re-use some of the functionality you developed for part 2.
+However, we will need at least the two separate scripts 'logistic' and '
+nnet' that we can call separately for each part.
+</p>
+<p>
+    You may make exactly the same set of assumptions as were previously listed
+    for part 2. Your program output when called with
+    <code>nnet 0.001 9 10 magic_train.arff magic_test.arff</code>
+    should also have the exact same format
+    for output as part 2, and an example can be found in <a href="">magic_nnet_out.txt</a>
+    on canvas. Your program output when called with
+    <code>nnet 0.01 10 20 diabetes_train.arff diabetes_test.arff</code>
+    should also have the exact same format
+    for output as part 2, and an example can be found in <a href="">diabetes_nnet_out.txt</a>
+    on canvas.
+</p>
+<p>
+
+    <font color="red">
+    <b>For this assignment we do not expect you outputs to exactly match ours.
+    However, your outputs in terms of roughly decreasing cross-entropy error,
+    overall performance, and instance predictions should be close to ours (but we aren't really checking your
+    error calculations or predictions, other than making sure that the predictions are not all
+    1's or all 0's).
+    (Your average F1 score should be over 0.7 when run 5 times for the
+        magic set, and over 0.6 when run 5 times for the diabetes set.)</b>
+    </font>
+</p>
+
+<h3> Submitting Your Work </h3>
+    You should turn in your work electronically using the Canvas course management system.
+    Turn in all source files and your runnable program as well as a
+    file called <code>hw4.pdf</code> that shows your work for Part 1.
+    All files should be compressed as one zip file named
+    <code>&lt;Wisc username&gt;_hw4.zip< code>. <b>Note: Your wisc username is
+        the 'wiscusername' part of 'wiscusername@wisc.edu'. For example, if your
+    wisc email was joeshmoe@wisc.edu, then your username is joeshmoe, and your
+    submission should be 'joeshmoe_hw4.zip'</b>. Upload this zip file as Homework
+    #4 at the <a href="https://canvas.wisc.edu/courses/77597">course Canvas site</a>.
+<br>
+
+<h3> <font color="red">Reminders: </font></h3>
+<font color="red">
+    <ul>
+        <li>You need to ensure that your code will run, when called from the
+            command line as described above, on the CS department Linux
+            machines.</li>
+        <li>You will be penalized if your program fails to meet any of the above specifications.</li>
+        <li> Make sure to test your programs on CSL machines before you submit. </li>
+        <li> Since many students are using python,
+            and the native lab machines don't have a package installed that reads arff files, we will
+            allow students to use the "scipy" package and the "scipy.io.arff.loadarff()" function
+            to load arff files. We will also allow students to use pandas 0.22.0.
+            We will still run the code on the lab machines, and we will be
+            using scipy 1.0.0. To create the same python environment on your lab machines, run
+            "pip install --user scipy" and "pip3 install --user scipy" from the command line of your
+            local computer. You may use scipy only for loading the arff files, and nothing else.</li>
+    </ul>
+</font>
+</font>
+<br>
+<br>
+</body><div id="abineFillElement"></div></html>
