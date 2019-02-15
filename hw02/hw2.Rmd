@@ -6,8 +6,8 @@ output: pdf_document
 ---
 
 # Problem 2
-![](/Users/owner/Box Sync/UW/_cs760/hw02/learning_curve.pdf){width=350px}\ 
-![](/Users/owner/Box Sync/UW/_cs760/hw02/roc.pdf){width=350px}\ 
+![](/Users/owner/Box Sync/UW/passedClasses/_cs760/hw02/learning_curve.pdf){width=350px}\ 
+![](/Users/owner/Box Sync/UW/passedClasses/_cs760/hw02/roc.pdf){width=350px}\ 
 
 # Problem 3
 Confusion matrix. Rows - predicted, columns - real.
